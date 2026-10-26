@@ -1,5 +1,9 @@
 # AI Interview Prep Dashboard 🎯
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-brightgreen?style=for-the-badge&logo=github)](https://sauravsahu9179-crypto.github.io/AI-Interview-Prep/)
+
+🔗 **Live Application Link**: [https://sauravsahu9179-crypto.github.io/AI-Interview-Prep/](https://sauravsahu9179-crypto.github.io/AI-Interview-Prep/)
+
 An intelligent, all-in-one interview preparation application powered by Google Gemini API. Built entirely with vanilla web technologies (HTML5, Tailwind CSS, ES Modules) and client-side storage—no Node.js, npm, or backend server required.
 
 ---
