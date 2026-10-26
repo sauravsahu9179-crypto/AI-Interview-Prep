@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Interview Prep - Advanced Coach & Dashboard</title>
+  
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Marked Markdown Parser CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    /* Custom Styling on Top of Tailwind v4 */
+    :root {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+      background-color: #09090b;
+      background-image: 
+        radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(24, 24, 27, 0.5) 0%, transparent 100%);
+      background-attachment: fixed;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #09090b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3f3f46;
+    }
+
+    /* Fade-in Animation */
+    .fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glow utilities */
+    .glow-indigo {
+      box-shadow: 0 0 20px -5px rgba(99, 102, 241, 0.15);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 20px -5px rgba(16, 185, 129, 0.15);
+    }
+
+    /* Markdown styling overrides for container outputs */
+    .prose-custom h1, .prose-custom h2, .prose-custom h3 {
+      color: #fafafa;
+      font-weight: 600;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .prose-custom h1 { font-size: 1.25rem; }
+    .prose-custom h2 { font-size: 1.1rem; }
+    .prose-custom h3 { font-size: 1rem; }
+    .prose-custom p {
+      color: #d4d4d8;
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+    .prose-custom ul, .prose-custom ol {
+      margin-left: 1.25rem;
+      margin-bottom: 0.75rem;
+      list-style-type: disc;
+      color: #d4d4d8;
+    }
+    .prose-custom li {
+      margin-bottom: 0.25rem;
+    }
+    .prose-custom pre {
+      background-color: #18181b;
+      border: 1px border-color: #27272a;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      margin: 0.75rem 0;
+      overflow-x: auto;
+    }
+    .prose-custom code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.875em;
+      color: #a5b4fc;
+      background-color: rgba(63, 63, 70, 0.3);
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.25rem;
+    }
+    .prose-custom pre code {
+      color: #f4f4f5;
+      background-color: transparent;
+      padding: 0;
+      font-size: 0.85rem;
+    }
+    .prose-custom blockquote {
+      border-left: 4px solid #6366f1;
+      padding-left: 1rem;
+      color: #a1a1aa;
+      font-style: italic;
+      margin: 0.75rem 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-zinc-100 flex flex-row overflow-hidden">
+
+  <!-- Left Sidebar Navigation -->
+  <aside class="w-68 bg-zinc-950 border-r border-zinc-800 flex flex-col justify-between h-screen sticky top-0 shrink-0 select-none z-20">
+    <div class="flex flex-col overflow-y-auto flex-1">
+      
+      <!-- Brand Logo -->
+      <div class="px-6 py-5 border-b border-zinc-900 flex items-center space-x-3 bg-zinc-950/80 sticky top-0 backdrop-blur-md">
+        <div class="p-2 rounded-lg bg-indigo-600/10 border border-indigo-500/20 text-indigo-400">
+          <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-sm font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">AI Interview Prep</h1>
+          <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Advanced Sandbox</p>
+        </div>
+      </div>
+
+      <!-- Quick Candidate Profile Widget -->
+      <div class="p-4 border-b border-zinc-900">
+        <div class="px-4 py-3.5 rounded-xl bg-zinc-900/40 border border-zinc-800/60 shadow-sm flex flex-col">
+          <p class="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">Candidate Profile</p>
+          <h4 id="sidebar-user-name" class="text-xs font-bold text-zinc-200 truncate mt-1">Guest Candidate</h4>
+          <span id="sidebar-user-role" class="text-[11px] text-indigo-400 font-medium truncate mt-0.5">Role: Profile Not Set</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex-1 px-4 py-3 space-y-1">
+        <button data-tab="profile" class="tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-indigo-400 bg-indigo-500/10 border-l-4 border-indigo-500">
+          <i data-lucide="user" class="w-4 h-4"></i>
+          <span>1. Profile</span>
+        </button>
+        <button data-tab="jd-analyzer" class="tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border-l-4 border-transparent">
+          <i data-lucide="file-search" class="w-4 h-4"></i>
+          <span>2. JD Analyzer</span>
+        </button>
+        <button data-tab="match-score" class="tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border-l-4 border-transparent">
+          <i data-lucide="award" class="w-4 h-4"></i>
+          <span>3. Match Score</span>
+        </button>
+        <button data-tab="question-generator" class="tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border-l-4 border-transparent">
+          <i data-lucide="help-circle" class="w-4 h-4"></i>
+          <span>4. Question Gen</span>
+        </button>
+        <button data-tab="mock-evaluator" class="tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border-l-4 border-transparent">
+          <i data-lucide="user-check" class="w-4 h-4"></i>
+          <span>5. Mock Evaluator</span>
+        </button>
+        <button data-tab="doubt-solver" class="tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border-l-4 border-transparent">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>6. Doubt Solver</span>
+        </button>
+        <button data-tab="prep-plan" class="tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border-l-4 border-transparent">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+          <span>7. Prep Plan Agent</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-zinc-900 bg-zinc-950 flex flex-col space-y-3">
+      <div class="text-[10px] text-zinc-600 text-center font-medium">
+        Running Client-Side out of LocalStorage
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Space -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+
+
+
+    <!-- Main Header -->
+    <header class="h-16 border-b border-zinc-900 bg-zinc-950/50 backdrop-blur-md px-8 flex items-center justify-between shrink-0 select-none z-10">
+      <div class="flex items-center space-x-3">
+        <h2 id="current-view-title" class="text-sm font-semibold tracking-wider text-zinc-300 uppercase">1. Profile Dashboard</h2>
+        <span class="text-zinc-700">|</span>
+        <span id="current-view-subtitle" class="text-xs text-zinc-500">Configure your parameters & target role</span>
+      </div>
+    </header>
+
+    <!-- Scrollable Content Tab Container -->
+    <div id="content-scroller" class="flex-1 overflow-y-auto p-8 relative">
+
+      <!-- ================= 1. PROFILE SECTION ================= -->
+      <section id="tab-profile" class="tab-panel fade-in space-y-6">
+        <div class="max-w-4xl space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-zinc-100 flex items-center space-x-2">
+                <i data-lucide="user-cog" class="w-5 h-5 text-indigo-400"></i>
+                <span>Candidate Interview Profile</span>
+              </h3>
+              <p class="text-xs text-zinc-500 mt-1">This forms the foundation of all AI generations, mock evaluations, and custom plans.</p>
+            </div>
+            <div class="flex space-x-3">
+              <button id="load-sample-btn" class="px-3.5 py-1.5 rounded-lg border border-indigo-500/20 text-indigo-400 bg-indigo-500/5 hover:bg-indigo-500/10 text-xs font-semibold transition-all">
+                Load Sample Profile Data
+              </button>
+              <button id="save-profile-btn" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center space-x-2 transition-all">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                <span>Save Profile</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left inputs (Basic metadata) -->
+            <div class="space-y-4">
+              <div class="bg-zinc-900/30 border border-zinc-800/80 rounded-xl p-5 space-y-4">
+                <div>
+                  <label for="profile-name" class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Candidate Name</label>
+                  <input type="text" id="profile-name" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3.5 py-2 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g. Jane Doe">
+                </div>
+                <div>
+                  <label for="profile-role" class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Target Job Role</label>
+                  <input type="text" id="profile-role" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3.5 py-2 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g. Senior Frontend Engineer">
+                </div>
+              </div>
+
+              <div class="bg-zinc-900/30 border border-zinc-800/80 rounded-xl p-5">
+                <label for="profile-skills" class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Current Skills & Technologies</label>
+                <textarea id="profile-skills" rows="5" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="List core skills, libraries, frameworks (e.g. JavaScript, React, Tailwind CSS, TypeScript, Webpack, Responsive Design, State Management, Next.js)"></textarea>
+              </div>
+
+              <div class="bg-zinc-900/30 border border-zinc-800/80 rounded-xl p-5">
+                <label for="profile-weak-areas" class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Weak Areas / Target Improvements</label>
+                <textarea id="profile-weak-areas" rows="5" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="Identify topics you need help with (e.g. System Design, Data Structures and Algorithms, Web Performance Optimization, Browser Security)"></textarea>
+              </div>
+            </div>
+
+            <!-- Right inputs (Job Description) -->
+            <div class="bg-zinc-900/30 border border-zinc-800/80 rounded-xl p-5 flex flex-col h-full">
+              <label for="profile-jd" class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Target Job Description (JD)</label>
+              <textarea id="profile-jd" class="w-full flex-1 min-h-[300px] bg-zinc-950 border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="Paste the full job posting or requirements sheet here to power targeted questions and analytics."></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. JD ANALYZER SECTION ================= -->
+      <section id="tab-jd-analyzer" class="tab-panel fade-in hidden space-y-6">
+        <div class="max-w-4xl space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-zinc-100 flex items-center space-x-2">
+                <i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i>
+                <span>Job Description Analyzer</span>
+              </h3>
+              <p class="text-xs text-zinc-500 mt-1">Parses your saved Job Description using Gemini to isolate key technical, soft skills, and core responsibilities.</p>
+            </div>
+            <button id="analyze-jd-btn" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center space-x-2 transition-all">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-indigo-200"></i>
+              <span>Analyze JD</span>
+            </button>
+          </div>
+
+          <!-- Alert warning if JD is blank -->
+          <div id="analyzer-no-jd-warn" class="hidden p-4 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 text-xs">
+            <span class="font-bold">No Job Description found in Profile!</span> Please save a Job Description in your Profile tab before initiating the analyzer.
+          </div>
+
+          <!-- Loading state overlay container -->
+          <div id="analyzer-container" class="relative min-h-[300px] bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 glow-indigo overflow-hidden">
+            <!-- Spinner overlay -->
+            <div id="analyzer-loading" class="hidden absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center space-y-3 z-10">
+              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500 border-r-2"></div>
+              <p class="text-xs text-indigo-300">Gemini is processing your Job Description...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="analyzer-empty" class="h-64 flex flex-col items-center justify-center text-center space-y-4">
+              <div class="p-4 rounded-full bg-zinc-850 text-zinc-500">
+                <i data-lucide="file-search" class="w-8 h-8"></i>
+              </div>
+              <div class="space-y-1">
+                <h4 class="text-xs font-bold text-zinc-400">Ready to Analyze</h4>
+                <p class="text-[11px] text-zinc-500 max-w-sm">Press the "Analyze JD" button at the top-right to extract technical and soft skill metrics.</p>
+              </div>
+            </div>
+
+            <!-- Populated UI results -->
+            <div id="analyzer-results" class="hidden space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tech stack column -->
+                <div class="bg-zinc-950/80 border border-zinc-850 p-5 rounded-xl space-y-3">
+                  <h4 class="text-xs font-bold text-indigo-400 flex items-center space-x-2 uppercase tracking-wider">
+                    <i data-lucide="code" class="w-4 h-4"></i>
+                    <span>Technical Requirements</span>
+                  </h4>
+                  <div id="analyzer-tech-list" class="flex flex-wrap gap-2 pt-2">
+                    <!-- Tech tags added in JS -->
+                  </div>
+                </div>
+
+                <!-- Soft skills column -->
+                <div class="bg-zinc-950/80 border border-zinc-850 p-5 rounded-xl space-y-3">
+                  <h4 class="text-xs font-bold text-indigo-400 flex items-center space-x-2 uppercase tracking-wider">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span>Soft Skills & Competencies</span>
+                  </h4>
+                  <div id="analyzer-soft-list" class="flex flex-wrap gap-2 pt-2">
+                    <!-- Soft skill tags added in JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Core responsibilities column -->
+              <div class="bg-zinc-950/80 border border-zinc-850 p-5 rounded-xl space-y-3">
+                <h4 class="text-xs font-bold text-emerald-400 flex items-center space-x-2 uppercase tracking-wider">
+                  <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                  <span>Key Responsibilities</span>
+                </h4>
+                <ul id="analyzer-resp-list" class="space-y-2.5 pt-2 text-xs text-zinc-300">
+                  <!-- Checklist elements added in JS -->
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. MATCH SCORE SECTION ================= -->
+      <section id="tab-match-score" class="tab-panel fade-in hidden space-y-6">
+        <div class="max-w-4xl space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-zinc-100 flex items-center space-x-2">
+                <i data-lucide="percent" class="w-5 h-5 text-indigo-400"></i>
+                <span>Match Score Calculator</span>
+              </h3>
+              <p class="text-xs text-zinc-500 mt-1">Evaluates your current skills against the job requirements to generate a gap analysis and actionable bridge plan.</p>
+            </div>
+            <button id="calculate-match-btn" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center space-x-2 transition-all">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-indigo-200"></i>
+              <span>Evaluate Match Fit</span>
+            </button>
+          </div>
+
+          <!-- Alert warnings -->
+          <div id="match-no-jd-warn" class="hidden p-4 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 text-xs">
+            <span class="font-bold">Missing profile parameters!</span> Ensure both "Current Skills" and "Job Description" fields are saved in the Profile tab to enable scoring.
+          </div>
+
+          <div id="match-container" class="relative min-h-[300px] bg-zinc-900/30 border border-zinc-800/80 rounded-2xl p-6 glow-indigo overflow-hidden">
+            <!-- Spinner -->
+            <div id="match-loading" class="hidden absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center space-y-3 z-10">
+              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500 border-r-2"></div>
+              <p class="text-xs text-indigo-300">Gemini is comparing your profile fit...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="match-empty" class="h-64 flex flex-col items-center justify-center text-center space-y-4">
+              <div class="p-4 rounded-full bg-zinc-850 text-zinc-500">
+                <i data-lucide="award" class="w-8 h-8"></i>
+              </div>
+              <div class="space-y-1">
+                <h4 class="text-xs font-bold text-zinc-400">Match Scoring Ready</h4>
+                <p class="text-[11px] text-zinc-500 max-w-sm">Initiate the match calculator to generate a percentage score, gap report, and actionable improvement steps.</p>
+              </div>
+            </div>
+
+            <!-- Populated match details -->
+            <div id="match-results" class="hidden space-y-8">
+              <div class="flex flex-col md:flex-row items-center md:items-start md:space-x-8 space-y-6 md:space-y-0">
+                <!-- SVG circular gauge -->
+                <div class="flex flex-col items-center select-none shrink-0 relative">
+                  <div class="relative w-36 h-36 flex items-center justify-center">
+                    <!-- Gauge ring -->
+                    <svg class="w-full h-full transform -rotate-90">
+                      <circle cx="72" cy="72" r="64" stroke="#18181b" stroke-width="8" fill="transparent" />
+                      <circle id="match-ring" cx="72" cy="72" r="64" stroke="url(#indigo-grad)" stroke-width="8" stroke-dasharray="402.1" stroke-dashoffset="402.1" class="transition-all duration-[1200ms] ease-out" stroke-linecap="round" fill="transparent" />
+                      <defs>
+                        <linearGradient id="indigo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#818cf8" />
+                          <stop offset="100%" stop-color="#10b981" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div class="absolute flex flex-col items-center">
+                      <span id="match-pct-text" class="text-3xl font-extrabold text-zinc-50">0%</span>
+                      <span class="text-[9px] text-zinc-500 uppercase tracking-widest font-semibold">Match score</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Gap Analysis Text -->
+                <div class="flex-1 space-y-4">
+                  <div class="bg-zinc-950/80 border border-zinc-850 p-5 rounded-xl">
+                    <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2 flex items-center space-x-2">
+                      <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                      <span>Gap Analysis</span>
+                    </h4>
+                    <p id="match-gap-text" class="text-xs text-zinc-300 leading-relaxed">Evaluating skills...</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recommendation Bridge checklist -->
+              <div class="bg-zinc-950/80 border border-zinc-850 p-5 rounded-xl space-y-3">
+                <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-2">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                  <span>Action Plan: Bridge the Gap</span>
+                </h4>
+                <div id="match-actions" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                  <!-- 3 panels inserted dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. QUESTION GENERATOR SECTION ================= -->
+      <section id="tab-question-generator" class="tab-panel fade-in hidden space-y-6">
+        <div class="max-w-4xl space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-zinc-100 flex items-center space-x-2">
+                <i data-lucide="help-circle" class="w-5 h-5 text-indigo-400"></i>
+                <span>Tailored Question Generator</span>
+              </h3>
+              <p class="text-xs text-zinc-500 mt-1">Creates customized interview prompts targeted at your Weak Areas and target Job Description.</p>
+            </div>
+          </div>
+
+          <!-- Control bar card -->
+          <div class="bg-zinc-900/40 border border-zinc-800/80 rounded-xl p-5 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
+              <div>
+                <label for="q-type" class="block text-[10px] font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Interview Type</label>
+                <select id="q-type" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-indigo-500">
+                  <option value="Technical">Technical Coding / Concepts</option>
+                  <option value="System Design">System Design & Architecture</option>
+                  <option value="Behavioral">Behavioral (STAR method)</option>
+                </select>
+              </div>
+              <div>
+                <label for="q-difficulty" class="block text-[10px] font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Difficulty Level</label>
+                <select id="q-difficulty" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-indigo-500">
+                  <option value="Mid Level">Mid-Level</option>
+                  <option value="Senior">Senior Professional</option>
+                  <option value="Lead/Staff">Lead / Staff Architect</option>
+                  <option value="Junior">Junior Graduate</option>
+                </select>
+              </div>
+            </div>
+            <button id="generate-questions-btn" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center justify-center space-x-2 transition-all">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Generate 5 Questions</span>
+            </button>
+          </div>
+
+          <div id="generator-container" class="relative min-h-[300px]">
+            <!-- Spinner -->
+            <div id="generator-loading" class="hidden absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center space-y-3 z-10 rounded-2xl border border-zinc-800">
+              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500 border-r-2"></div>
+              <p class="text-xs text-indigo-300">Gemini is compiling questions tailored to your profile...</p>
+            </div>
+
+            <!-- Empty state -->
+            <div id="generator-empty" class="h-64 bg-zinc-900/30 border border-zinc-800/80 rounded-2xl flex flex-col items-center justify-center text-center space-y-4">
+              <div class="p-4 rounded-full bg-zinc-850 text-zinc-500">
+                <i data-lucide="layers" class="w-8 h-8"></i>
+              </div>
+              <div class="space-y-1">
+                <h4 class="text-xs font-bold text-zinc-400">Questions Queue Empty</h4>
+                <p class="text-[11px] text-zinc-500 max-w-sm">Configure difficulty, select interview track, and trigger generation.</p>
+              </div>
+            </div>
+
+            <!-- Question container grid -->
+            <div id="questions-list" class="hidden space-y-4">
+              <!-- Cards dynamic injection in JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. MOCK EVALUATOR SECTION ================= -->
+      <section id="tab-mock-evaluator" class="tab-panel fade-in hidden space-y-6">
+        <div class="max-w-4xl space-y-6">
+          <div>
+            <h3 class="text-lg font-bold text-zinc-100 flex items-center space-x-2">
+              <i data-lucide="user-check" class="w-5 h-5 text-indigo-400"></i>
+              <span>AI Answer Evaluator</span>
+            </h3>
+            <p class="text-xs text-zinc-500 mt-1">Submit your response for review. Gemini will provide a rating, outline positive elements, and suggest technical improvements.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Side Form inputs -->
+            <div class="lg:col-span-7 bg-zinc-900/30 border border-zinc-800/80 rounded-xl p-5 space-y-4">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="eval-question" class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Question under Evaluation</label>
+                  <button id="tts-question-btn" type="button" class="text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors flex items-center space-x-1" title="Listen to question">
+                    <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                    <span>Listen Question</span>
+                  </button>
+                </div>
+                <textarea id="eval-question" rows="3" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Select a question from the Generator or write your own here..."></textarea>
+              </div>
+
+              <div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center space-x-2.5">
+                    <label class="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Your Mock Answer</label>
+                    <div class="flex rounded-lg bg-zinc-950 p-0.5 border border-zinc-800 select-none">
+                      <button id="mode-standard-btn" type="button" class="px-2 py-0.5 text-[9px] font-bold rounded bg-indigo-600 text-white transition-all">Standard</button>
+                      <button id="mode-star-btn" type="button" class="px-2 py-0.5 text-[9px] font-bold rounded text-zinc-400 hover:text-zinc-200 transition-all">Guided STAR</button>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center justify-between sm:justify-end space-x-4">
+                    <button id="stt-answer-btn" type="button" class="text-[10px] text-zinc-400 hover:text-indigo-400 transition-colors flex items-center space-x-1 p-1 rounded hover:bg-zinc-950 border border-transparent hover:border-zinc-800" title="Speak your answer">
+                      <i data-lucide="mic" class="w-3.5 h-3.5 text-zinc-400" id="mic-icon"></i>
+                      <span id="stt-status-text">Voice Input</span>
+                    </button>
+                    <span id="eval-word-count" class="text-[10px] text-zinc-500">0 characters</span>
+                  </div>
+                </div>
+
+                <!-- Standard Answer Textarea -->
+                <div id="wrapper-standard-answer" class="block">
+                  <textarea id="eval-answer" rows="9" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3.5 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="Draft your answer here. Use bullet points or code if relevant. Try to hit major technical frameworks and use STAR method format."></textarea>
+                </div>
+
+                <!-- Guided STAR Mode inputs -->
+                <div id="wrapper-star-answer" class="hidden space-y-2">
+                  <div>
+                    <label class="block text-[9px] font-semibold text-zinc-500 uppercase tracking-wider mb-0.5">Situation</label>
+                    <textarea id="star-situation" rows="2" class="star-field w-full bg-zinc-950 border border-zinc-850 rounded-lg px-3 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="Describe the background context, task, or team setting."></textarea>
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-semibold text-zinc-500 uppercase tracking-wider mb-0.5">Task</label>
+                    <textarea id="star-task" rows="2" class="star-field w-full bg-zinc-950 border border-zinc-850 rounded-lg px-3 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="Explain the challenge, requirement, or conflict you needed to resolve."></textarea>
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-semibold text-zinc-500 uppercase tracking-wider mb-0.5">Action</label>
+                    <textarea id="star-action" rows="3" class="star-field w-full bg-zinc-950 border border-zinc-850 rounded-lg px-3 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="Specify exactly what you did, what tools you used, and how you contributed."></textarea>
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-semibold text-zinc-500 uppercase tracking-wider mb-0.5">Result</label>
+                    <textarea id="star-result" rows="2" class="star-field w-full bg-zinc-950 border border-zinc-850 rounded-lg px-3 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none" placeholder="Outline the outcomes, learnings, metrics, or performance improvements."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center pt-2">
+                <button id="clear-eval-btn" class="px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:bg-zinc-900 text-zinc-400 hover:text-zinc-200 text-xs font-semibold transition-all">
+                  Clear Board
+                </button>
+                <button id="evaluate-answer-btn" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center space-x-2 transition-all">
+                  <i data-lucide="check-circle" class="w-4 h-4"></i>
+                  <span>Evaluate Response</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Side Feedback Results -->
+            <div class="lg:col-span-5 relative min-h-[440px] bg-zinc-900/30 border border-zinc-800/80 rounded-xl p-5 flex flex-col justify-between overflow-hidden">
+              
+              <!-- Loader overlay -->
+              <div id="eval-loading" class="hidden absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center space-y-3 z-10">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500 border-r-2"></div>
+                <p class="text-xs text-indigo-300">Gemini is evaluating your answer...</p>
+              </div>
+
+              <!-- Empty State -->
+              <div id="eval-empty" class="flex-1 flex flex-col items-center justify-center text-center space-y-4 py-16">
+                <div class="p-3.5 rounded-full bg-zinc-850 text-zinc-500">
+                  <i data-lucide="file-check" class="w-6 h-6"></i>
+                </div>
+                <div class="space-y-1">
+                  <h4 class="text-xs font-bold text-zinc-400">Evaluation Board Empty</h4>
+                  <p class="text-[10px] text-zinc-500 max-w-[240px]">Provide a question and write your answer, then submit to check feedback.</p>
+                </div>
+              </div>
+
+              <!-- Content results display -->
+              <div id="eval-results" class="hidden space-y-5 flex-1">
+                <div class="flex items-center space-x-4 border-b border-zinc-850 pb-3">
+                  <div class="w-14 h-14 rounded-xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 flex flex-col items-center justify-center shrink-0">
+                    <span id="eval-score-text" class="text-xl font-black">0</span>
+                    <span class="text-[8px] text-zinc-500 uppercase tracking-widest font-semibold mt-[-3px]">/ 10</span>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-zinc-200">AI Evaluation Report</h4>
+                    <p id="eval-rating-level" class="text-[10px] text-indigo-400 font-semibold mt-0.5">Rating level...</p>
+                  </div>
+                </div>
+
+                <!-- Strengths list -->
+                <div class="space-y-1.5">
+                  <h5 class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1.5">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span>Strengths</span>
+                  </h5>
+                  <ul id="eval-strengths" class="list-disc pl-4 text-[11px] text-zinc-300 space-y-1">
+                    <!-- Injected JS -->
+                  </ul>
+                </div>
+
+                <!-- Critique -->
+                <div class="space-y-1.5">
+                  <h5 class="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                    <span>Areas for Improvement</span>
+                  </h5>
+                  <p id="eval-critique" class="text-[11px] text-zinc-300 leading-relaxed bg-zinc-950/80 p-3 rounded-lg border border-zinc-850">
+                    <!-- Injected critique -->
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. DOUBT SOLVER SECTION ================= -->
+      <section id="tab-doubt-solver" class="tab-panel fade-in hidden space-y-6">
+        <div class="max-w-4xl space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-zinc-100 flex items-center space-x-2">
+                <i data-lucide="message-square" class="w-5 h-5 text-indigo-400"></i>
+                <span>RAG Doubt Solver & Mentor</span>
+              </h3>
+              <p class="text-xs text-zinc-500 mt-1">Consult an expert engineering mentor. Ask concept explanations, request custom code snippets, or resolve complex doubts.</p>
+            </div>
+            <button id="clear-chat-btn" class="text-[11px] text-zinc-400 hover:text-zinc-200 transition-colors flex items-center space-x-1 border border-zinc-800 px-3 py-1.5 rounded-lg bg-zinc-900/20">
+              <i data-lucide="trash-2" class="w-3 h-3"></i>
+              <span>Clear Chat History</span>
+            </button>
+          </div>
+
+          <!-- Chat Window Box -->
+          <div class="bg-zinc-900/30 border border-zinc-800/80 rounded-2xl flex flex-col h-[520px] overflow-hidden glow-indigo">
+            
+            <!-- Message thread list container -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4">
+              <!-- Default welcome message -->
+              <div class="flex space-x-3 items-start">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0 select-none">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <div class="bg-zinc-900/60 border border-zinc-800/60 p-4 rounded-r-xl rounded-bl-xl max-w-[85%] text-xs space-y-2">
+                  <p class="text-zinc-200 font-semibold">Hello! I am your AI Technical Mentor.</p>
+                  <p class="text-zinc-300 leading-relaxed">Ask me any question regarding your weak areas, standard algorithms, systems design concepts, React internals, or interview prep. I'll provide structured answers and code examples.</p>
+                  <div class="pt-2 flex flex-wrap gap-1.5">
+                    <button class="chat-prompt-pill px-2.5 py-1.5 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 rounded-lg text-[10px] transition-all">"Explain JavaScript closure scope"</button>
+                    <button class="chat-prompt-pill px-2.5 py-1.5 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 rounded-lg text-[10px] transition-all">"How does debounce differ from throttle?"</button>
+                    <button class="chat-prompt-pill px-2.5 py-1.5 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 rounded-lg text-[10px] transition-all">"Optimize React re-renders"</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Typing indicator -->
+            <div id="chat-typing" class="hidden px-5 py-2 flex items-center space-x-2 text-zinc-500 border-t border-zinc-900 bg-zinc-950/30">
+              <span class="animate-pulse text-[10px] font-medium text-indigo-400">Mentor is preparing detailed guidance...</span>
+            </div>
+
+            <!-- Chat input form -->
+            <form id="chat-form" class="p-3 border-t border-zinc-900 bg-zinc-950 flex items-center space-x-2">
+              <input type="text" id="chat-input" class="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2.5 text-xs text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="Ask your doubt or code question here...">
+              <button type="submit" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow-md flex items-center space-x-1.5 transition-all">
+                <span>Send</span>
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 7. PREP PLAN SECTION ================= -->
+      <section id="tab-prep-plan" class="tab-panel fade-in hidden space-y-6">
+        <div class="max-w-4xl space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-zinc-100 flex items-center space-x-2">
+                <i data-lucide="calendar-check" class="w-5 h-5 text-indigo-400"></i>
+                <span>7-Day Prep Plan Agent</span>
+              </h3>
+              <p class="text-xs text-zinc-500 mt-1">Generates a customized, highly targeted 7-day preparation sprint based on your profile inputs and Job Description.</p>
+            </div>
+            <button id="generate-plan-btn" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md flex items-center space-x-2 transition-all">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-200"></i>
+              <span>Compile Plan</span>
+            </button>
+          </div>
+
+          <!-- Alert warnings -->
+          <div id="plan-no-jd-warn" class="hidden p-4 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 text-xs">
+            <span class="font-bold">Missing profile parameters!</span> Ensure Name, Target Role, Skills, and Job Description are saved in the Profile tab to compile your plan.
+          </div>
+
+          <div id="plan-container" class="relative min-h-[300px]">
+            <!-- Spinner -->
+            <div id="plan-loading" class="hidden absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center space-y-3 z-10 rounded-2xl border border-zinc-800">
+              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-indigo-500 border-r-2"></div>
+              <p class="text-xs text-indigo-300">Gemini is structuring your 7-day prep plan...</p>
+            </div>
+
+            <!-- Empty state -->
+            <div id="plan-empty" class="h-64 bg-zinc-900/30 border border-zinc-800/80 rounded-2xl flex flex-col items-center justify-center text-center space-y-4">
+              <div class="p-4 rounded-full bg-zinc-850 text-zinc-500">
+                <i data-lucide="calendar" class="w-8 h-8"></i>
+              </div>
+              <div class="space-y-1">
+                <h4 class="text-xs font-bold text-zinc-400">Prep Plan Ready to Compile</h4>
+                <p class="text-[11px] text-zinc-500 max-w-sm">Press "Compile Plan" to schedule days and tasks focused on bridging your competency gaps.</p>
+              </div>
+            </div>
+
+            <!-- Plan Accordions/Calendar layout -->
+            <div id="plan-timeline" class="hidden space-y-4">
+              <!-- Active daily columns and checkboxes in JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+
+
+  <!-- Toast Notification Overlay -->
+  <div id="toast" class="fixed bottom-4 right-4 z-50 hidden bg-zinc-900 border border-zinc-800 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 text-xs text-zinc-200 animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <i data-lucide="info" class="w-4 h-4 text-indigo-400 shrink-0" id="toast-icon"></i>
+    <span id="toast-message">Notification message</span>
+  </div>
+
+  <!-- Global Application Script (ES Module) -->
+  <script type="module">
+    import { GoogleGenerativeAI } from 'https://esm.run/@google/generative-ai';
+    
+    // Alias GoogleGenerativeAI class as GoogleGenAI to meet prompt specifications
+    const GoogleGenAI = GoogleGenerativeAI;
+
+    // API Key initialized from local storage or environment
+    let apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+
+    // Asynchronously fetch .env key at startup
+    async function initApiKey() {
+      try {
+        const response = await fetch('.env');
+        if (response.ok) {
+          const text = await response.text();
+          const match = text.match(/GEMINI_API_KEY\s*=\s*(.*)/);
+          if (match && match[1]) {
+            const key = match[1].trim().replace(/['"]/g, '');
+            if (key && key !== 'YOUR_GEMINI_API_KEY_HERE') {
+              apiKey = key;
+              localStorage.setItem('GEMINI_API_KEY', key);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Client-side .env fetch blocked or failed. Using fallback keys.");
+      }
+    }
+
+    // Core reusable Gemini API Requester
+    async function generateAIResponse(prompt) {
+      let activeKey = localStorage.getItem('GEMINI_API_KEY') || apiKey;
+      
+      if (!activeKey || activeKey === 'AIzaSy') {
+        const userKey = window.prompt("Gemini API Key required:\nPlease enter your Google Gemini API key (saved securely in your local browser):");
+        if (userKey && userKey.trim()) {
+          activeKey = userKey.trim();
+          apiKey = activeKey;
+          localStorage.setItem('GEMINI_API_KEY', activeKey);
+          showToast("API Key saved to local storage!", "check-circle");
+        } else {
+          showToast("Gemini API Key missing.", "alert-triangle");
+          throw new Error("No API key configured");
+        }
+      }
+
+      try {
+        const ai = new GoogleGenAI(activeKey);
+        const model = ai.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const result = await model.generateContent(prompt);
+        const textOutput = result.response.text();
+        return textOutput;
+      } catch (error) {
+        console.error("Gemini API call encountered an error: ", error);
+        showToast("API generation failed: " + error.message, "x-circle");
+        throw error;
+      }
+    }
+
+    // ==========================================
+    // UTILITY HELPER FUNCTIONS
+    // ==========================================
+
+    function showToast(message, iconName = 'info') {
+      const toastEl = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.innerText = message;
+      
+      // Update Lucide icon
+      toastIcon.setAttribute('data-lucide', iconName);
+      lucide.createIcons();
+
+      toastEl.classList.remove('hidden');
+      setTimeout(() => {
+        toastEl.classList.add('hidden');
+      }, 3500);
+    }
+
+    // Clean JSON response from potential markdown wrapping blocks
+    function sanitizeJSONResponse(text) {
+      let clean = text.trim();
+      if (clean.startsWith('```json')) {
+        clean = clean.substring(7);
+      } else if (clean.startsWith('```')) {
+        clean = clean.substring(3);
+      }
+      if (clean.endsWith('```')) {
+        clean = clean.substring(0, clean.length - 3);
+      }
+      return clean.trim();
+    }
+
+
+
+    // ==========================================
+    // DATA PERSISTENCY - PROFILE CONTROLLERS
+    // ==========================================
+
+    const profileFields = {
+      name: 'profile-name',
+      role: 'profile-role',
+      skills: 'profile-skills',
+      weakAreas: 'profile-weak-areas',
+      jd: 'profile-jd'
+    };
+
+    function saveProfileToLocalStorage() {
+      const profileData = {};
+      for (const [key, id] of Object.entries(profileFields)) {
+        profileData[key] = document.getElementById(id).value;
+      }
+      localStorage.setItem('USER_PROFILE_DATA', JSON.stringify(profileData));
+      
+      // Update sidebar candidate widget in real-time
+      updateSidebarWidget(profileData.name, profileData.role);
+      
+      showToast("Profile committed successfully!", "check-circle");
+    }
+
+    function loadProfileFromLocalStorage() {
+      const dataStr = localStorage.getItem('USER_PROFILE_DATA');
+      if (dataStr) {
+        const data = JSON.parse(dataStr);
+        for (const [key, id] of Object.entries(profileFields)) {
+          if (data[key]) {
+            document.getElementById(id).value = data[key];
+          }
+        }
+        updateSidebarWidget(data.name, data.role);
+      } else {
+        updateSidebarWidget("Guest Candidate", "Profile Not Set");
+      }
+    }
+
+    function updateSidebarWidget(name, role) {
+      document.getElementById('sidebar-user-name').innerText = name || "Guest Candidate";
+      document.getElementById('sidebar-user-role').innerText = role ? `Role: ${role}` : "Role: Profile Not Set";
+    }
+
+    // Load Sample Data Handler
+    const sampleProfile = {
+      name: "Alex Rivera",
+      role: "Senior Frontend Engineer",
+      skills: "JavaScript (ES6+), React 18, TypeScript, HTML5, CSS3, Tailwind CSS, Next.js, Redux Toolkit, React Testing Library, Cypress, RESTful APIs, Web Performance Optimization",
+      weakAreas: "System Design (Scalability, Load Balancing, CDN strategies), Complex Data Structures and Algorithms (specifically Graph traversals and Dynamic Programming), Web Security configurations (OAuth2, CORS, XSS mitigation)",
+      jd: "About the Role:\nWe are searching for a Senior Frontend Engineer to build high-performance dashboard interfaces for our cloud-native core platform.\n\nRequirements:\n- Deep expertise in JavaScript, TypeScript, and React frameworks.\n- Experience styling applications using utility CSS toolings like Tailwind CSS.\n- Strong understanding of state management patterns (Redux, Context API).\n- Familiarity with build tools like Webpack or Vite.\n- Knowledge of frontend caching, rendering patterns (SSR, CSR), and responsive design principles.\n- Excellent communication skills and willingness to mentor junior developers."
+    };
+
+    function injectSampleProfile() {
+      for (const [key, val] of Object.entries(sampleProfile)) {
+        const id = profileFields[key];
+        document.getElementById(id).value = val;
+      }
+      showToast("Sample candidate data loaded. Save to store it.", "info");
+    }
+
+    // ==========================================
+    // JD ANALYZER CONTROLLER
+    // ==========================================
+
+    async function handleJDAnalysis() {
+      // Refresh profile data in local storage
+      const dataStr = localStorage.getItem('USER_PROFILE_DATA');
+      if (!dataStr) {
+        document.getElementById('analyzer-no-jd-warn').classList.remove('hidden');
+        return;
+      }
+      const data = JSON.parse(dataStr);
+      if (!data.jd || data.jd.trim() === "") {
+        document.getElementById('analyzer-no-jd-warn').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('analyzer-no-jd-warn').classList.add('hidden');
+      document.getElementById('analyzer-loading').classList.remove('hidden');
+      document.getElementById('analyzer-empty').classList.add('hidden');
+      document.getElementById('analyzer-results').classList.add('hidden');
+
+      const analysisPrompt = `
+        Analyze the following Job Description and identify:
+        1. "technicalRequirements": A list of up to 10 technical skills, languages, tools, or frameworks mentioned.
+        2. "softSkills": A list of up to 5 soft skills, traits, or working culture demands.
+        3. "coreResponsibilities": A list of up to 6 primary tasks or key responsibilities the role performs.
+        
+        Return the findings in raw JSON format matching this structure:
+        {
+          "technicalRequirements": ["React", "TypeScript"],
+          "softSkills": ["Communication", "Mentorship"],
+          "coreResponsibilities": ["Design UI components", "Optimize build setups"]
+        }
+        
+        Do not return any other text, markdown decorators, or formatting outside of the valid JSON object.
+        Job Description:
+        ${data.jd}
+      `;
+
+      try {
+        const rawRes = await generateAIResponse(analysisPrompt);
+        const cleanJSON = sanitizeJSONResponse(rawRes);
+        const parsed = JSON.parse(cleanJSON);
+
+        // Tech requirements tags
+        const techList = document.getElementById('analyzer-tech-list');
+        techList.innerHTML = '';
+        parsed.technicalRequirements.forEach(tech => {
+          const badge = document.createElement('span');
+          badge.className = "px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded-lg text-xs font-semibold";
+          badge.innerText = tech;
+          techList.appendChild(badge);
+        });
+
+        // Soft skills tags
+        const softList = document.getElementById('analyzer-soft-list');
+        softList.innerHTML = '';
+        parsed.softSkills.forEach(soft => {
+          const badge = document.createElement('span');
+          badge.className = "px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 rounded-lg text-xs font-semibold";
+          badge.innerText = soft;
+          softList.appendChild(badge);
+        });
+
+        // Core responsibilities checkboxes
+        const respList = document.getElementById('analyzer-resp-list');
+        respList.innerHTML = '';
+        parsed.coreResponsibilities.forEach(resp => {
+          const li = document.createElement('li');
+          li.className = "flex items-start space-x-2.5";
+          li.innerHTML = `
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+            <span>${resp}</span>
+          `;
+          respList.appendChild(li);
+        });
+        
+        lucide.createIcons();
+        document.getElementById('analyzer-results').classList.remove('hidden');
+        showToast("JD Analyzed successfully!", "check-circle");
+      } catch (err) {
+        console.error(err);
+        document.getElementById('analyzer-empty').classList.remove('hidden');
+      } finally {
+        document.getElementById('analyzer-loading').classList.add('hidden');
+      }
+    }
+
+    // ==========================================
+    // MATCH SCORE CONTROLLER
+    // ==========================================
+
+    async function handleMatchScoring() {
+      const dataStr = localStorage.getItem('USER_PROFILE_DATA');
+      if (!dataStr) {
+        document.getElementById('match-no-jd-warn').classList.remove('hidden');
+        return;
+      }
+      const data = JSON.parse(dataStr);
+      if (!data.skills || !data.jd || data.skills.trim() === "" || data.jd.trim() === "") {
+        document.getElementById('match-no-jd-warn').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('match-no-jd-warn').classList.add('hidden');
+      document.getElementById('match-loading').classList.remove('hidden');
+      document.getElementById('match-empty').classList.add('hidden');
+      document.getElementById('match-results').classList.add('hidden');
+
+      const matchPrompt = `
+        Evaluate the fit between the candidate's skills and the Job Description.
+        Analyze strengths, deficiencies, and map recommendations.
+        
+        Return the findings in raw JSON format matching this structure:
+        {
+          "matchPercentage": 75,
+          "gapAnalysis": "The candidate has excellent Frontend expertise in React and TypeScript. However, they lack experience in server-side configurations and build tool customization (Webpack/Vite) listed in the Job Description.",
+          "actionPlan": [
+            "Learn basic build system configurations using Webpack or Vite",
+            "Understand server-side rendering (SSR) internals in Next.js",
+            "Practice architectural scalability considerations for modern layout platforms"
+          ]
+        }
+        
+        Ensure "matchPercentage" is a pure integer between 0 and 100.
+        Ensure "actionPlan" has exactly 3 elements.
+        Do not return any other text, markdown wrapper lines, or annotations outside the valid JSON object.
+        
+        Candidate Skills:
+        ${data.skills}
+        
+        Job Description:
+        ${data.jd}
+      `;
+
+      try {
+        const rawRes = await generateAIResponse(matchPrompt);
+        const cleanJSON = sanitizeJSONResponse(rawRes);
+        const parsed = JSON.parse(cleanJSON);
+
+        const pct = parsed.matchPercentage;
+        
+        // Update circular gauge and text representation
+        document.getElementById('match-pct-text').innerText = `${pct}%`;
+        const ring = document.getElementById('match-ring');
+        
+        // Gauge circumference = 2 * Math.PI * 64 = 402.12
+        const offset = 402.12 - (pct / 100) * 402.12;
+        ring.style.strokeDashoffset = offset;
+
+        // Gap analysis text
+        document.getElementById('match-gap-text').innerText = parsed.gapAnalysis;
+
+        // Bridging Action plan
+        const actionContainer = document.getElementById('match-actions');
+        actionContainer.innerHTML = '';
+        parsed.actionPlan.forEach((act, idx) => {
+          const card = document.createElement('div');
+          card.className = "bg-zinc-950/90 border border-zinc-850 p-4.5 rounded-xl flex flex-col space-y-2.5 relative overflow-hidden";
+          card.innerHTML = `
+            <div class="flex items-center justify-between border-b border-zinc-900 pb-2">
+              <span class="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">Milestone 0${idx+1}</span>
+              <i data-lucide="compass" class="w-4 h-4 text-emerald-400"></i>
+            </div>
+            <p class="text-xs text-zinc-300 leading-relaxed">${act}</p>
+          `;
+          actionContainer.appendChild(card);
+        });
+
+        lucide.createIcons();
+        document.getElementById('match-results').classList.remove('hidden');
+        showToast("Match Fit evaluation generated!", "check-circle");
+      } catch (err) {
+        console.error(err);
+        document.getElementById('match-empty').classList.remove('hidden');
+      } finally {
+        document.getElementById('match-loading').classList.add('hidden');
+      }
+    }
+
+    // ==========================================
+    // QUESTION GENERATOR CONTROLLER
+    // ==========================================
+
+    async function handleQuestionGeneration() {
+      const dataStr = localStorage.getItem('USER_PROFILE_DATA');
+      if (!dataStr) {
+        showToast("Create a profile in Profile tab first.", "alert-triangle");
+        return;
+      }
+      const data = JSON.parse(dataStr);
+      if (!data.jd || data.jd.trim() === "") {
+        showToast("Save a Job Description in your Profile first.", "alert-triangle");
+        return;
+      }
+
+      document.getElementById('generator-loading').classList.remove('hidden');
+      document.getElementById('generator-empty').classList.add('hidden');
+      document.getElementById('questions-list').classList.add('hidden');
+
+      const qType = document.getElementById('q-type').value;
+      const qDiff = document.getElementById('q-difficulty').value;
+
+      const genPrompt = `
+        You are a staff engineer interviewing a candidate. Generate exactly 5 interview questions targeting the candidate's Weak Areas, Target Role, and Job Description.
+        
+        Question parameters:
+        - Track / Type: ${qType}
+        - Experience target: ${qDiff}
+        
+        Return the response in raw JSON format containing an array of objects matching this exact structure:
+        [
+          {
+            "id": 1,
+            "question": "How would you design a distributed cache layer for an high-traffic UI application?",
+            "reason": "Targeted at mitigating System Design weakness."
+          },
+          {
+            "id": 2,
+            "question": "Explain closures and how they can cause memory leaks in JavaScript applications.",
+            "reason": "Targeted at verifying JavaScript skill limits."
+          }
+        ]
+        
+        Generate exactly 5 questions.
+        Do not return any markdown syntax, decorators, or text outside the JSON array.
+        
+        Job Description:
+        ${data.jd}
+        
+        Candidate Weak Areas:
+        ${data.weakAreas}
+      `;
+
+      try {
+        const rawRes = await generateAIResponse(genPrompt);
+        const cleanJSON = sanitizeJSONResponse(rawRes);
+        const questions = JSON.parse(cleanJSON);
+
+        const listEl = document.getElementById('questions-list');
+        listEl.innerHTML = '';
+
+        questions.forEach((q, idx) => {
+          const card = document.createElement('div');
+          card.className = "bg-zinc-900/40 border border-zinc-800/80 rounded-xl p-5 hover:border-zinc-700/80 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4";
+          
+          const textContainer = document.createElement('div');
+          textContainer.className = "space-y-1.5 flex-1";
+          textContainer.innerHTML = `
+            <div class="flex items-center space-x-2">
+              <span class="px-2 py-0.5 bg-zinc-950 border border-zinc-800 rounded text-[9px] text-indigo-400 font-bold uppercase tracking-wider">Question 0${idx+1}</span>
+              <span class="text-[10px] text-zinc-500 italic">${q.reason}</span>
+            </div>
+            <p class="text-xs font-semibold text-zinc-100 leading-relaxed q-text">${q.question}</p>
+          `;
+
+          const btn = document.createElement('button');
+          btn.className = "px-3.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-300 rounded-lg text-xs font-semibold shrink-0 transition-all flex items-center space-x-1.5";
+          btn.innerHTML = `
+            <span>Practice</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          `;
+
+          // Event listener to forward the question to the Mock Evaluator
+          btn.addEventListener('click', () => {
+            document.getElementById('eval-question').value = q.question;
+            
+            // Switch tab index visually
+            switchTab('mock-evaluator');
+            
+            showToast("Question sent to Mock Evaluator board!", "check-circle");
+          });
+
+          card.appendChild(textContainer);
+          card.appendChild(btn);
+          listEl.appendChild(card);
+        });
+
+        lucide.createIcons();
+        listEl.classList.remove('hidden');
+        showToast("Generated 5 tailored questions!", "check-circle");
+      } catch (err) {
+        console.error(err);
+        document.getElementById('generator-empty').classList.remove('hidden');
+      } finally {
+        document.getElementById('generator-loading').classList.add('hidden');
+      }
+    }
+
+    // ==========================================
+    // MOCK EVALUATOR CONTROLLER
+    // ==========================================
+
+    let activeInputMode = 'standard'; // 'standard' or 'star'
+    let isListening = false;
+    let recognition = null;
+    let lastFocusedTextarea = document.getElementById('eval-answer');
+
+    async function handleAnswerEvaluation() {
+      const qText = document.getElementById('eval-question').value;
+      let aText = "";
+
+      if (activeInputMode === 'standard') {
+        aText = document.getElementById('eval-answer').value;
+      } else {
+        const s = document.getElementById('star-situation').value.trim();
+        const t = document.getElementById('star-task').value.trim();
+        const a = document.getElementById('star-action').value.trim();
+        const r = document.getElementById('star-result').value.trim();
+        if (s || t || a || r) {
+          aText = `Situation:\n${s}\n\nTask:\n${t}\n\nAction:\n${a}\n\nResult:\n${r}`;
+        }
+      }
+
+      if (!qText.trim() || !aText.trim()) {
+        showToast("Complete both fields to generate critique.", "alert-triangle");
+        return;
+      }
+
+      document.getElementById('eval-loading').classList.remove('hidden');
+      document.getElementById('eval-empty').classList.add('hidden');
+      document.getElementById('eval-results').classList.add('hidden');
+
+      const evalPrompt = `
+        Evaluate the candidate's mock response to the given interview question. Give construct feedback and score fit out of 10.
+        
+        Question: ${qText}
+        Candidate Response: 
+        ${aText}
+        
+        Return the findings in raw JSON format matching this structure:
+        {
+          "score": 7,
+          "ratingLevel": "Strong Mid-Level Response",
+          "strengths": [
+            "Includes proper terminology regarding closure bounds",
+            "Provides clean chronological step execution examples"
+          ],
+          "critique": "The candidate has a solid theoretical grasp but missed outlining the risk of memory leaks caused by DOM references retained in global scopes. To improve, mention garbage collection thresholds and clear variables manually."
+        }
+        
+        Ensure "score" is an integer between 0 and 10.
+        Do not return any other text, markdown structures, or annotations outside the valid JSON object.
+      `;
+
+      try {
+        const rawRes = await generateAIResponse(evalPrompt);
+        const cleanJSON = sanitizeJSONResponse(rawRes);
+        const parsed = JSON.parse(cleanJSON);
+
+        // Set score
+        document.getElementById('eval-score-text').innerText = parsed.score;
+        document.getElementById('eval-rating-level').innerText = parsed.ratingLevel;
+
+        // Set strengths list
+        const strengthsList = document.getElementById('eval-strengths');
+        strengthsList.innerHTML = '';
+        parsed.strengths.forEach(str => {
+          const li = document.createElement('li');
+          li.innerText = str;
+          strengthsList.appendChild(li);
+        });
+
+        // Set critique
+        document.getElementById('eval-critique').innerText = parsed.critique;
+
+        document.getElementById('eval-results').classList.remove('hidden');
+        showToast("Answer evaluated successfully!", "check-circle");
+      } catch (err) {
+        console.error(err);
+        document.getElementById('eval-empty').classList.remove('hidden');
+      } finally {
+        document.getElementById('eval-loading').classList.add('hidden');
+      }
+    }
+
+    // Characters counter for response box
+    document.getElementById('eval-answer').addEventListener('input', (e) => {
+      const cnt = e.target.value.length;
+      document.getElementById('eval-word-count').innerText = `${cnt} characters`;
+    });
+
+    // Clear board
+    document.getElementById('clear-eval-btn').addEventListener('click', () => {
+      document.getElementById('eval-question').value = "";
+      document.getElementById('eval-answer').value = "";
+      document.getElementById('star-situation').value = "";
+      document.getElementById('star-task').value = "";
+      document.getElementById('star-action').value = "";
+      document.getElementById('star-result').value = "";
+      document.getElementById('eval-word-count').innerText = "0 characters";
+      document.getElementById('eval-empty').classList.remove('hidden');
+      document.getElementById('eval-results').classList.add('hidden');
+      showToast("Evaluation board cleared.", "info");
+    });
+
+    // ==========================================
+    // VOICE INPUT (STT) & OUTPUT (TTS) LOGIC
+    // ==========================================
+
+    const sttBtn = document.getElementById('stt-answer-btn');
+    const sttText = document.getElementById('stt-status-text');
+    const micIcon = document.getElementById('mic-icon');
+    const ttsBtn = document.getElementById('tts-question-btn');
+
+    document.getElementById('eval-answer').addEventListener('focus', () => {
+      lastFocusedTextarea = document.getElementById('eval-answer');
+    });
+    document.getElementById('star-situation').addEventListener('focus', () => {
+      lastFocusedTextarea = document.getElementById('star-situation');
+    });
+    document.getElementById('star-task').addEventListener('focus', () => {
+      lastFocusedTextarea = document.getElementById('star-task');
+    });
+    document.getElementById('star-action').addEventListener('focus', () => {
+      lastFocusedTextarea = document.getElementById('star-action');
+    });
+    document.getElementById('star-result').addEventListener('focus', () => {
+      lastFocusedTextarea = document.getElementById('star-result');
+    });
+
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return null;
+      
+      const rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = false;
+      rec.lang = 'en-US';
+
+      rec.onstart = () => {
+        isListening = true;
+        sttBtn.classList.add('bg-red-500/10', 'border-red-500/20', 'text-red-400');
+        sttBtn.classList.remove('hover:bg-zinc-950', 'border-transparent', 'text-zinc-400');
+        micIcon.className = "w-3.5 h-3.5 text-red-500 animate-pulse";
+        sttText.innerText = "Listening...";
+        showToast("Voice typing active. Speak clearly.", "mic");
+      };
+
+      rec.onend = () => {
+        isListening = false;
+        sttBtn.classList.remove('bg-red-500/10', 'border-red-500/20', 'text-red-400');
+        sttBtn.classList.add('hover:bg-zinc-950', 'border-transparent', 'text-zinc-400');
+        micIcon.className = "w-3.5 h-3.5 text-zinc-400";
+        sttText.innerText = "Voice Input";
+      };
+
+      rec.onerror = (e) => {
+        console.error("STT Error: ", e);
+        showToast("Speech recognition error: " + e.error, "x-circle");
+        rec.stop();
+      };
+
+      rec.onresult = (event) => {
+        const resultIndex = event.resultIndex;
+        const transcript = event.results[resultIndex][0].transcript;
+        
+        if (lastFocusedTextarea) {
+          const currentText = lastFocusedTextarea.value;
+          lastFocusedTextarea.value = (currentText ? currentText + " " : "") + transcript.trim();
+          updateAnswerStats();
+        }
+      };
+
+      return rec;
+    }
+
+    sttBtn.addEventListener('click', () => {
+      if (!recognition) {
+        recognition = initSpeechRecognition();
+      }
+
+      if (!recognition) {
+        showToast("Voice typing is not supported in this browser.", "alert-triangle");
+        return;
+      }
+
+      if (isListening) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    });
+
+    ttsBtn.addEventListener('click', () => {
+      const qText = document.getElementById('eval-question').value.trim();
+      if (!qText) {
+        showToast("No question text to read.", "alert-triangle");
+        return;
+      }
+
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        ttsBtn.querySelector('span').innerText = "Listen Question";
+        ttsBtn.querySelector('i').className = "w-3.5 h-3.5";
+        showToast("Audio reading cancelled.", "info");
+      } else {
+        const utterance = new SpeechSynthesisUtterance(qText);
+        utterance.onend = () => {
+          ttsBtn.querySelector('span').innerText = "Listen Question";
+          ttsBtn.querySelector('i').className = "w-3.5 h-3.5";
+        };
+        utterance.onerror = () => {
+          ttsBtn.querySelector('span').innerText = "Listen Question";
+          ttsBtn.querySelector('i').className = "w-3.5 h-3.5";
+        };
+        
+        ttsBtn.querySelector('span').innerText = "Stop Reading";
+        ttsBtn.querySelector('i').className = "w-3.5 h-3.5 animate-bounce";
+        
+        window.speechSynthesis.speak(utterance);
+      }
+    });
+
+    // ==========================================
+    // GUIDED STAR METHOD INPUT SWITCHER
+    // ==========================================
+
+    const stdBtn = document.getElementById('mode-standard-btn');
+    const starBtn = document.getElementById('mode-star-btn');
+    const stdWrapper = document.getElementById('wrapper-standard-answer');
+    const starWrapper = document.getElementById('wrapper-star-answer');
+
+    stdBtn.addEventListener('click', () => {
+      activeInputMode = 'standard';
+      stdBtn.className = "px-2 py-0.5 text-[9px] font-bold rounded bg-indigo-600 text-white transition-all";
+      starBtn.className = "px-2 py-0.5 text-[9px] font-bold rounded text-zinc-400 hover:text-zinc-200 transition-all";
+      stdWrapper.classList.remove('hidden');
+      stdWrapper.classList.add('block');
+      starWrapper.classList.remove('block');
+      starWrapper.classList.add('hidden');
+      lastFocusedTextarea = document.getElementById('eval-answer');
+      updateAnswerStats();
+    });
+
+    starBtn.addEventListener('click', () => {
+      activeInputMode = 'star';
+      starBtn.className = "px-2 py-0.5 text-[9px] font-bold rounded bg-indigo-600 text-white transition-all";
+      stdBtn.className = "px-2 py-0.5 text-[9px] font-bold rounded text-zinc-400 hover:text-zinc-200 transition-all";
+      starWrapper.classList.remove('hidden');
+      starWrapper.classList.add('block');
+      stdWrapper.classList.remove('block');
+      stdWrapper.classList.add('hidden');
+      lastFocusedTextarea = document.getElementById('star-situation');
+      updateAnswerStats();
+    });
+
+    function updateAnswerStats() {
+      let count = 0;
+      if (activeInputMode === 'standard') {
+        count = document.getElementById('eval-answer').value.length;
+      } else {
+        const s = document.getElementById('star-situation').value.length;
+        const t = document.getElementById('star-task').value.length;
+        const a = document.getElementById('star-action').value.length;
+        const r = document.getElementById('star-result').value.length;
+        count = s + t + a + r;
+      }
+      document.getElementById('eval-word-count').innerText = `${count} characters`;
+    }
+
+    document.querySelectorAll('.star-field').forEach(field => {
+      field.addEventListener('input', updateAnswerStats);
+    });
+
+    // ==========================================
+    // RAG DOUBT SOLVER CONTROLLER
+    // ==========================================
+
+    const chatMessagesContainer = document.getElementById('chat-messages');
+
+    function appendMessage(sender, text, isMarkdown = false) {
+      const wrapper = document.createElement('div');
+      wrapper.className = "flex space-x-3 items-start fade-in";
+
+      let bubbleContent = "";
+      if (isMarkdown) {
+        // Parse markdown text using Marked
+        bubbleContent = marked.parse(text);
+      } else {
+        // Standard text escape
+        bubbleContent = `<p class="leading-relaxed">${text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`;
+      }
+
+      if (sender === 'user') {
+        wrapper.innerHTML = `
+          <div class="flex-1"></div>
+          <div class="bg-indigo-600 border border-indigo-500/30 p-3.5 rounded-l-xl rounded-br-xl max-w-[85%] text-xs text-indigo-50 shadow-md">
+            ${bubbleContent}
+          </div>
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-300 shrink-0 select-none">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+        `;
+      } else {
+        wrapper.innerHTML = `
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0 select-none">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <div class="bg-zinc-900/60 border border-zinc-800/60 p-4 rounded-r-xl rounded-bl-xl max-w-[85%] text-xs prose-custom glow-indigo">
+            ${bubbleContent}
+          </div>
+        `;
+      }
+
+      chatMessagesContainer.appendChild(wrapper);
+      lucide.createIcons();
+      
+      // Auto scroll
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
+
+    async function handleDoubtQuery(queryText) {
+      if (!queryText.trim()) return;
+
+      // Add user message
+      appendMessage('user', queryText);
+      
+      // Clear input
+      document.getElementById('chat-input').value = "";
+      document.getElementById('chat-typing').classList.remove('hidden');
+
+      const doubtPrompt = `
+        You are a world-class engineering mentor and coding coach. Explain the user's technical query clearly and concisely.
+        Use markdown headings, bullet points, and code snippets where relevant.
+        
+        Question / Doubt:
+        ${queryText}
+      `;
+
+      try {
+        const rawRes = await generateAIResponse(doubtPrompt);
+        appendMessage('mentor', rawRes, true);
+      } catch (err) {
+        console.error(err);
+        appendMessage('mentor', "Sorry, I encountered an issue while generating an answer. Verify your API Key configuration.");
+      } finally {
+        document.getElementById('chat-typing').classList.add('hidden');
+      }
+    }
+
+    document.getElementById('chat-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = document.getElementById('chat-input').value;
+      handleDoubtQuery(val);
+    });
+
+    // Handle suggestion pill clicks
+    document.querySelectorAll('.chat-prompt-pill').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        const query = e.target.innerText.replace(/"/g, '');
+        handleDoubtQuery(query);
+      });
+    });
+
+    // Clear chat
+    document.getElementById('clear-chat-btn').addEventListener('click', () => {
+      const welcomeHTML = `
+        <div class="flex space-x-3 items-start">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0 select-none">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <div class="bg-zinc-900/60 border border-zinc-800/60 p-4 rounded-r-xl rounded-bl-xl max-w-[85%] text-xs space-y-2">
+            <p class="text-zinc-200 font-semibold">Hello! I am your AI Technical Mentor.</p>
+            <p class="text-zinc-300 leading-relaxed">Ask me any question regarding your weak areas, standard algorithms, systems design concepts, React internals, or interview prep. I'll provide structured answers and code examples.</p>
+            <div class="pt-2 flex flex-wrap gap-1.5">
+              <button class="chat-prompt-pill px-2.5 py-1.5 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 rounded-lg text-[10px] transition-all">"Explain JavaScript closure scope"</button>
+              <button class="chat-prompt-pill px-2.5 py-1.5 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 rounded-lg text-[10px] transition-all">"How does debounce differ from throttle?"</button>
+              <button class="chat-prompt-pill px-2.5 py-1.5 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 rounded-lg text-[10px] transition-all">"Optimize React re-renders"</button>
+            </div>
+          </div>
+        </div>
+      `;
+      chatMessagesContainer.innerHTML = welcomeHTML;
+      
+      // Bind suggestion pills event listeners back
+      document.querySelectorAll('.chat-prompt-pill').forEach(p => {
+        p.addEventListener('click', (ev) => {
+          handleDoubtQuery(ev.target.innerText.replace(/"/g, ''));
+        });
+      });
+      lucide.createIcons();
+      showToast("Chat history cleared.", "info");
+    });
+
+    // ==========================================
+    // PREP PLAN AGENT CONTROLLER
+    // ==========================================
+
+    async function handlePlanGeneration() {
+      const dataStr = localStorage.getItem('USER_PROFILE_DATA');
+      if (!dataStr) {
+        document.getElementById('plan-no-jd-warn').classList.remove('hidden');
+        return;
+      }
+      const data = JSON.parse(dataStr);
+      if (!data.jd || !data.role || data.jd.trim() === "" || data.role.trim() === "") {
+        document.getElementById('plan-no-jd-warn').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('plan-no-jd-warn').classList.add('hidden');
+      document.getElementById('plan-loading').classList.remove('hidden');
+      document.getElementById('plan-empty').classList.add('hidden');
+      document.getElementById('plan-timeline').classList.add('hidden');
+
+      const planPrompt = `
+        Compile a customized 7-day preparation calendar sprint checklist for the target role '${data.role}'.
+        Focus specifically on bridging the candidate's Weak Areas based on the Job Description constraints.
+        
+        Return the schedule in raw JSON format matching this structure:
+        {
+          "days": [
+            {
+              "dayTitle": "Day 1: Modern Styling Architecture",
+              "tasks": [
+                { "id": "day1_task1", "taskText": "Review CSS variables and Tailwind utility layout structures" },
+                { "id": "day1_task2", "taskText": "Design responsive mobile-first grids under strict layout specs" }
+              ]
+            },
+            {
+              "dayTitle": "Day 2: State Flow and Optimization",
+              "tasks": [
+                { "id": "day2_task1", "taskText": "Analyze re-render loops in React and context bottlenecks" }
+              ]
+            }
+          ]
+        }
+        
+        Create exactly 7 days.
+        Ensure every task object has a unique "id" attribute and clean "taskText".
+        Do not return any other text, markdown backticks, or annotations outside the valid JSON object.
+        
+        Candidate Skills:
+        ${data.skills}
+        
+        Candidate Weak Areas:
+        ${data.weakAreas}
+        
+        Job Description:
+        ${data.jd}
+      `;
+
+      try {
+        const rawRes = await generateAIResponse(planPrompt);
+        const cleanJSON = sanitizeJSONResponse(rawRes);
+        const parsed = JSON.parse(cleanJSON);
+
+        const timelineContainer = document.getElementById('plan-timeline');
+        timelineContainer.innerHTML = '';
+
+        parsed.days.forEach((day, dayIdx) => {
+          const dayCard = document.createElement('div');
+          dayCard.className = "bg-zinc-900/40 border border-zinc-800/80 rounded-xl overflow-hidden";
+          
+          // Header toggling panel
+          const header = document.createElement('button');
+          header.className = "w-full px-5 py-4 flex items-center justify-between bg-zinc-900/80 border-b border-zinc-800/40 hover:bg-zinc-800/20 text-left transition-all";
+          header.innerHTML = `
+            <div class="flex items-center space-x-3">
+              <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold">${dayIdx+1}</span>
+              <h4 class="text-xs font-bold text-zinc-100">${day.dayTitle}</h4>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200"></i>
+          `;
+
+          const taskListWrapper = document.createElement('div');
+          taskListWrapper.className = "p-5 space-y-3";
+
+          // Inject tasks list
+          day.tasks.forEach(task => {
+            const row = document.createElement('div');
+            row.className = "flex items-center space-x-3 bg-zinc-950/60 border border-zinc-850 p-3 rounded-lg";
+            
+            // Generate checked status from localstorage
+            const isChecked = localStorage.getItem(`PREP_TASK_${task.id}`) === 'true';
+
+            row.innerHTML = `
+              <input type="checkbox" id="${task.id}" ${isChecked ? 'checked' : ''} class="w-4.5 h-4.5 bg-zinc-950 border-zinc-800 rounded accent-indigo-600 focus:ring-indigo-500 transition-colors cursor-pointer">
+              <label for="${task.id}" class="text-xs text-zinc-300 select-none cursor-pointer flex-1 ${isChecked ? 'line-through text-zinc-500' : ''}">${task.taskText}</label>
+            `;
+
+            // Bind checklist handler
+            const cb = row.querySelector('input');
+            cb.addEventListener('change', (e) => {
+              const label = row.querySelector('label');
+              if (e.target.checked) {
+                localStorage.setItem(`PREP_TASK_${task.id}`, 'true');
+                label.classList.add('line-through', 'text-zinc-500');
+              } else {
+                localStorage.removeItem(`PREP_TASK_${task.id}`);
+                label.classList.remove('line-through', 'text-zinc-500');
+              }
+              showToast("Progress updated!", "info");
+            });
+
+            taskListWrapper.appendChild(row);
+          });
+
+          dayCard.appendChild(header);
+          dayCard.appendChild(taskListWrapper);
+          
+          // Toggle accordion accordion behaviour
+          header.addEventListener('click', () => {
+            taskListWrapper.classList.toggle('hidden');
+            header.querySelector('[data-lucide="chevron-down"]').classList.toggle('rotate-180');
+          });
+
+          timelineContainer.appendChild(dayCard);
+        });
+
+        lucide.createIcons();
+        timelineContainer.classList.remove('hidden');
+        showToast("Structured 7-day preparation calendar compiled!", "check-circle");
+      } catch (err) {
+        console.error(err);
+        document.getElementById('plan-empty').classList.remove('hidden');
+      } finally {
+        document.getElementById('plan-loading').classList.add('hidden');
+      }
+    }
+
+    // ==========================================
+    // TAB NAVIGATION SWITCHING LOGIC
+    // ==========================================
+
+    const navTitles = {
+      'profile': { title: "1. Profile Dashboard", subtitle: "Configure your parameters & target role" },
+      'jd-analyzer': { title: "2. Job Description Analyzer", subtitle: "Extract requirements, soft skills, and core responsibilities" },
+      'match-score': { title: "3. Fit & Match Score", subtitle: "Analyze competencies gaps and bridging path milestones" },
+      'question-generator': { title: "4. Question Generator", subtitle: "Acquire interview prompts targeting your profile parameters" },
+      'mock-evaluator': { title: "5. AI Answer Evaluator", subtitle: "Assess response scoring, critique, and structural modifications" },
+      'doubt-solver': { title: "6. RAG Doubt Solver", subtitle: "Mentor chat sandbox for systems, patterns, and optimization doubts" },
+      'prep-plan': { title: "7. Prep Plan Agent", subtitle: "Structured 7-day sprint preparation timeline checklist" }
+    };
+
+    function switchTab(tabId) {
+      // Toggle nav buttons styling classes
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.className = "tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-indigo-400 bg-indigo-500/10 border-l-4 border-indigo-500";
+        } else {
+          btn.className = "tab-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border-l-4 border-transparent";
+        }
+      });
+
+      // Toggle tab panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        if (panel.id === `tab-${tabId}`) {
+          panel.classList.remove('hidden');
+          panel.classList.add('block');
+        } else {
+          panel.classList.remove('block');
+          panel.classList.add('hidden');
+        }
+      });
+
+      // Update titles
+      const meta = navTitles[tabId];
+      if (meta) {
+        document.getElementById('current-view-title').innerText = meta.title;
+        document.getElementById('current-view-subtitle').innerText = meta.subtitle;
+      }
+
+      // Persist active view in localstorage
+      localStorage.setItem('ACTIVE_TAB_VIEW', tabId);
+    }
+
+    // Bind tab switching click event handlers
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tab = btn.getAttribute('data-tab');
+        switchTab(tab);
+      });
+    });
+
+    // ==========================================
+    // SETTINGS MODAL INTERACTION
+    // ==========================================
+    // settings configuration panel removed for security reasons
+
+    // ==========================================
+    // INITIALIZATION BLOCK
+    // ==========================================
+
+    document.getElementById('save-profile-btn').addEventListener('click', saveProfileToLocalStorage);
+    document.getElementById('load-sample-btn').addEventListener('click', injectSampleProfile);
+    document.getElementById('analyze-jd-btn').addEventListener('click', handleJDAnalysis);
+    document.getElementById('calculate-match-btn').addEventListener('click', handleMatchScoring);
+    document.getElementById('generate-questions-btn').addEventListener('click', handleQuestionGeneration);
+    document.getElementById('evaluate-answer-btn').addEventListener('click', handleAnswerEvaluation);
+    document.getElementById('generate-plan-btn').addEventListener('click', handlePlanGeneration);
+
+    // Initial setups
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Load environment variables if available
+      await initApiKey();
+
+      // Render icons
+      lucide.createIcons();
+      
+      // Load saved Profile
+      loadProfileFromLocalStorage();
+
+      // Check current active tab view
+      const activeTab = localStorage.getItem('ACTIVE_TAB_VIEW') || 'profile';
+      switchTab(activeTab);
+    });
+  </script>
+</body>
+</html>
